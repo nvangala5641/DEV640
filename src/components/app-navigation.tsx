@@ -1,8 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { use, useEffect,useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const links = [
   { href: "/auth", label: "Secure Auth",protected: false },
@@ -26,18 +26,24 @@ function isActive(pathname: string, href: string): boolean {
 
 export function AppNavigation() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    //const cookies = document.cookie.split(';');
-    const hasSession = document.cookie.split(';').some(row =>row.startsWith("session="));
+    const hasSession = document.cookie.split(';').some(row => row.startsWith("session="));
     setIsLoggedIn(hasSession);
   }, [pathname]);
 
-  if(!mounted) return null;
-  const filteredLinks = links.filter(link => isLoggedIn ? link.protected :!link.protected);
+  function handleLogout() {
+    document.cookie = "session=; path=/; max-age=0";
+    setIsLoggedIn(false);
+    router.push("/auth");
+  }
+
+  if (!mounted) return null;
+  const filteredLinks = links.filter(link => isLoggedIn ? link.protected : !link.protected);
 
   return (
     <nav className="space-y-2">
@@ -58,6 +64,15 @@ export function AppNavigation() {
           </Link>
         );
       })}
+
+      {isLoggedIn && (
+        <button
+          onClick={handleLogout}
+          className="mt-4 block w-full rounded-xl border border-red-200 bg-red-50 px-4 py-2.5 text-sm font-medium text-red-600 transition hover:bg-red-100 hover:text-red-700"
+        >
+          Log Out
+        </button>
+      )}
     </nav>
   );
 }

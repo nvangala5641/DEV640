@@ -35,6 +35,22 @@ export default function AuthPage() {
       return;
     }
 
+    const existingUser = JSON.parse(localStorage.getItem("users") || "[]");
+    if (mode === "signup") {
+      if (existingUser.some((user: any) => user.email === email.trim())) {
+        setError("Email already in use. Please log in or use a different email.");
+        return;
+      }
+      setFullName(fullName);
+    }
+    else {
+      const user = existingUser.find((u: any) => u.email === email.trim() && u.password === password.trim());
+      if(!user) {
+        setError("Invalid credentials. Please check your email and password.");
+        return;
+      }
+      setFullName(user.fullName);
+    }
     setStep("otp");
   }
 
@@ -45,8 +61,16 @@ export default function AuthPage() {
       return;
     }
 
+    if (mode === "signup") {
+      const users = JSON.parse(localStorage.getItem("users") || "[]");
+      users.push({ email, fullName, password });
+      localStorage.setItem("users", JSON.stringify(users));
+    }
+
+    localStorage.setItem("fullName", fullName);
+
     setError("");
-    document.cookie = "session=valid; path=/; max-age=3600"; 
+    document.cookie = "session=true; path=/; max-age=3600"; 
     window.location.href = "/";
     setStep("success");
   }

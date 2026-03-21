@@ -34,7 +34,7 @@ export default function HomePage() {
           Team Agreement and App Brainstorm
         </h1>
         <p className="mt-4 max-w-3xl text-slate-200">
-          This MVP implements your Next.js social networking concept for startup internal
+          This MVP is the social networking concept for startup internal
           communication, including admin tools, posts/quotes, messaging, secure auth, activity
           tracking, counseling support, dashboard analytics, and HR feedback.
         </p>

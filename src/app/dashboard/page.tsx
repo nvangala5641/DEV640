@@ -1,3 +1,5 @@
+"use client";
+import { useEffect, useState } from "react";
 import { teamMetrics, upcomingTrainings } from "@/lib/app-data";
 
 function formatDate(value: string): string {
@@ -9,6 +11,13 @@ function formatDate(value: string): string {
 }
 
 export default function DashboardPage() {
+
+  const [userName, setUserName] = useState("");
+
+  useEffect(() => {
+    const name = localStorage.getItem("fullName") || "User";
+    setUserName(name);
+  }, []);
   const totals = teamMetrics.reduce(
     (acc, team) => {
       acc.members += team.members;
@@ -26,6 +35,9 @@ export default function DashboardPage() {
     <div className="space-y-7">
       <section>
         <h1 className="font-display text-3xl font-semibold text-slate-900">Dashboard</h1>
+         <p className="uppercase mt-2 text-xl text-slate-600">
+          Welcome {userName}!
+        </p>
         <p className="mt-2 text-sm text-slate-600">
           Aggregated visibility across teams, organization groups, communication, and training.
         </p>

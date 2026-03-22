@@ -20,11 +20,11 @@ export default function AuthPage() {
   const router = useRouter();
 
   useEffect(() => {
-  const isLoggedIn = document.cookie.includes("session=true");
-  if (isLoggedIn) {
-    router.push("/");
-  }
-}, [router]);
+    const isLoggedIn = document.cookie.includes("session=true");
+    if (isLoggedIn) {
+      router.push("/");
+    }
+  }, [router]);
 
   function submitCredentials(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -36,26 +36,30 @@ export default function AuthPage() {
     }
 
     const existingUser = JSON.parse(localStorage.getItem("users") || "[]");
+
     if (mode === "signup") {
       if (existingUser.some((user: any) => user.email === email.trim())) {
         setError("Email already in use. Please log in or use a different email.");
         return;
       }
       setFullName(fullName);
-    }
-    else {
-      const user = existingUser.find((u: any) => u.email === email.trim() && u.password === password.trim());
-      if(!user) {
+    } else {
+      const user = existingUser.find(
+        (u: any) => u.email === email.trim() && u.password === password.trim()
+      );
+      if (!user) {
         setError("Invalid credentials. Please check your email and password.");
         return;
       }
       setFullName(user.fullName);
     }
+
     setStep("otp");
   }
 
   function submitOtp(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
     if (otp.trim() !== demoOtpCode) {
       setError("Invalid 2FA code. Try 246810 for this demo.");
       return;
@@ -70,7 +74,7 @@ export default function AuthPage() {
     localStorage.setItem("fullName", fullName);
 
     setError("");
-    document.cookie = "session=true; path=/; max-age=3600"; 
+    document.cookie = "session=true; path=/; max-age=3600";
     window.location.href = "/";
     setStep("success");
   }
@@ -86,19 +90,23 @@ export default function AuthPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-10">
       <section>
-        <h1 className="font-display text-3xl font-semibold text-slate-900">Secure Sign Up / Login</h1>
-        <p className="mt-2 text-sm text-slate-600">
+        <h1 className="font-display text-3xl font-semibold bg-gradient-to-r from-indigo-600 to-teal-500 bg-clip-text text-transparent">
+          Secure Sign Up / Login
+        </h1>
+        <p className="mt-2 max-w-xl text-sm text-slate-600">
           Simulated credentials flow plus a second-factor verification checkpoint.
         </p>
       </section>
 
-      <section className="mx-auto max-w-xl rounded-2xl border border-slate-200 bg-white/85 p-5">
+      <section className="mx-auto max-w-xl rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-2xl">
         <div className="flex rounded-lg bg-slate-100 p-1">
           <button
-            className={`flex-1 rounded-md px-3 py-2 text-sm font-medium ${
-              mode === "login" ? "bg-white text-slate-900 shadow" : "text-slate-600"
+            className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition duration-200 ${
+              mode === "login"
+                ? "bg-white text-slate-900 shadow-sm scale-[1.02]"
+                : "text-slate-600 hover:text-slate-800"
             }`}
             onClick={() => resetFlow("login")}
             type="button"
@@ -106,8 +114,10 @@ export default function AuthPage() {
             Login
           </button>
           <button
-            className={`flex-1 rounded-md px-3 py-2 text-sm font-medium ${
-              mode === "signup" ? "bg-white text-slate-900 shadow" : "text-slate-600"
+            className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition duration-200 ${
+              mode === "signup"
+                ? "bg-white text-slate-900 shadow-sm scale-[1.02]"
+                : "text-slate-600 hover:text-slate-800"
             }`}
             onClick={() => resetFlow("signup")}
             type="button"
@@ -117,60 +127,67 @@ export default function AuthPage() {
         </div>
 
         {step === "credentials" && (
-          <form className="mt-4 grid gap-3" onSubmit={submitCredentials}>
+          <form className="mt-5 grid gap-3" onSubmit={submitCredentials}>
             {mode === "signup" && (
               <input
-                className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+                className="rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none"
                 placeholder="Full name"
                 value={fullName}
                 onChange={(event) => setFullName(event.target.value)}
               />
             )}
             <input
-              className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none"
               placeholder="Work email"
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
             />
             <input
-              className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none"
               placeholder="Password"
               type="password"
               value={password}
               onChange={(event) => setPassword(event.target.value)}
             />
-            <button className="rounded-lg bg-slate-900 px-4 py-2 text-sm font-medium text-white">
+
+            <button className="rounded-lg bg-gradient-to-r from-indigo-600 to-teal-500 px-4 py-2 text-sm font-medium text-white transition hover:opacity-90">
               Continue to 2FA
             </button>
           </form>
         )}
 
         {step === "otp" && (
-          <form className="mt-4 grid gap-3" onSubmit={submitOtp}>
-            <p className="rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-xs text-teal-800">
+          <form className="mt-5 grid gap-3" onSubmit={submitOtp}>
+            <p className="animate-pulse rounded-lg border border-teal-200 bg-teal-50 px-3 py-2 text-xs text-teal-800">
               Demo verification code: {demoOtpCode}
             </p>
+
             <input
-              className="rounded-lg border border-slate-300 px-3 py-2 text-sm"
+              className="rounded-lg border border-slate-300 px-3 py-2 text-sm transition focus:border-teal-500 focus:ring-2 focus:ring-teal-200 outline-none"
               placeholder="Enter 2FA code"
               value={otp}
               onChange={(event) => setOtp(event.target.value)}
             />
-            <button className="rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white">
+
+            <button className="rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-teal-800">
               Verify and Access App
             </button>
           </form>
         )}
 
         {step === "success" && (
-          <div className="mt-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm text-emerald-900">
-            2FA verified. {mode === "signup" ? "Account created" : "Login successful"}. User can now
-            access all internal communication features.
+          <div className="mt-5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm text-emerald-900">
+            2FA verified. {mode === "signup" ? "Account created" : "Login successful"}.
+            User can now access all internal communication features.
           </div>
         )}
 
-        {error && <p className="mt-4 text-sm text-rose-600">{error}</p>}
+        {error && (
+          <div className="mt-5 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
+            {error}
+          </div>
+        )}
       </section>
     </div>
   );

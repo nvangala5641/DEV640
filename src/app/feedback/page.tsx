@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 type FeedbackEntry = {
   id: string;
@@ -27,8 +27,18 @@ const initialFeedback: FeedbackEntry[] = [
   },
 ];
 
+function loadFeedback(): FeedbackEntry[] {
+  if (typeof window === "undefined") return initialFeedback;
+  const stored = localStorage.getItem("feedback");
+  return stored ? JSON.parse(stored) : initialFeedback;
+}
+
 export default function FeedbackPage() {
-  const [feedback, setFeedback] = useState<FeedbackEntry[]>(initialFeedback);
+  const [feedback, setFeedback] = useState<FeedbackEntry[]>(loadFeedback);
+
+  useEffect(() => {
+    localStorage.setItem("feedback", JSON.stringify(feedback));
+  }, [feedback]);
   const [team, setTeam] = useState("Engineering");
   const [topic, setTopic] = useState("");
   const [priority, setPriority] = useState<FeedbackEntry["priority"]>("Medium");

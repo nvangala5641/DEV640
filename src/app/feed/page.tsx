@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 
 type Post = {
   id: string;
@@ -35,9 +35,24 @@ function formatDateTime(value: string): string {
   });
 }
 
+function loadPosts(): Post[] {
+  if (typeof window === "undefined") return initialPosts;
+  const stored = localStorage.getItem("posts");
+  return stored ? JSON.parse(stored) : initialPosts;
+}
+
 export default function FeedPage() {
-  const [posts, setPosts] = useState<Post[]>(initialPosts);
+  const [posts, setPosts] = useState<Post[]>(loadPosts);
   const [author, setAuthor] = useState("Team Member");
+
+  useEffect(() => {
+    const name = localStorage.getItem("fullName");
+    if (name) setAuthor(name);
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("posts", JSON.stringify(posts));
+  }, [posts]);
   const [draft, setDraft] = useState("");
   const [quoteId, setQuoteId] = useState("");
 

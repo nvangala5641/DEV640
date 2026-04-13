@@ -37,6 +37,8 @@ export function AppNavigation() {
   }, [pathname]);
 
   function handleLogout() {
+    const confirmed = window.confirm("Are you sure you want to log out?");
+    if (!confirmed) return;
     document.cookie = "session=; path=/; max-age=0";
     setIsLoggedIn(false);
     router.push("/auth");

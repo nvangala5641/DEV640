@@ -26,6 +26,14 @@ export default function AuthPage() {
     }
   }, [router]);
 
+  function validatePassword(pw: string): string | null {
+    if (pw.length < 8) return "Password must be at least 8 characters.";
+    if (!/[A-Z]/.test(pw)) return "Password must include an uppercase letter.";
+    if (!/[a-z]/.test(pw)) return "Password must include a lowercase letter.";
+    if (!/[0-9]/.test(pw)) return "Password must include a number.";
+    return null;
+  }
+
   function submitCredentials(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
@@ -33,6 +41,14 @@ export default function AuthPage() {
     if (!email.trim() || !password.trim() || (mode === "signup" && !fullName.trim())) {
       setError("Please complete all required fields.");
       return;
+    }
+
+    if (mode === "signup") {
+      const pwError = validatePassword(password.trim());
+      if (pwError) {
+        setError(pwError);
+        return;
+      }
     }
 
     const existingUser = JSON.parse(localStorage.getItem("users") || "[]");
@@ -55,6 +71,18 @@ export default function AuthPage() {
     }
 
     setStep("otp");
+  }
+
+  function skipOtp() {
+    if (mode === "signup") {
+      const users = JSON.parse(localStorage.getItem("users") || "[]");
+      users.push({ email, fullName, password });
+      localStorage.setItem("users", JSON.stringify(users));
+    }
+
+    localStorage.setItem("fullName", fullName);
+    document.cookie = "session=true; path=/; max-age=3600";
+    window.location.href = "/";
   }
 
   function submitOtp(event: FormEvent<HTMLFormElement>) {
@@ -152,7 +180,7 @@ export default function AuthPage() {
             />
 
             <button className="rounded-lg bg-gradient-to-r from-indigo-600 to-teal-500 px-4 py-2 text-sm font-medium text-white transition hover:opacity-90">
-              Continue to 2FA
+              Continue to 2FA (optional)
             </button>
           </form>
         )}
@@ -172,6 +200,13 @@ export default function AuthPage() {
 
             <button className="rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-teal-800">
               Verify and Access App
+            </button>
+            <button
+              type="button"
+              onClick={skipOtp}
+              className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+            >
+              Skip 2FA
             </button>
           </form>
         )}

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { teamMetrics, upcomingTrainings } from "@/lib/app-data";
 
@@ -44,6 +45,21 @@ export default function DashboardPage() {
         <p className="mt-2 max-w-2xl text-sm text-slate-600">
           Aggregated visibility across teams, organization groups, communication, and training.
         </p>
+      </section>
+
+      <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <Link href="/feed" className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white/90 px-4 py-3 text-sm font-medium text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-teal-300 hover:bg-teal-50 hover:shadow-md">
+          <span className="text-lg">&#9998;</span> Create a Post
+        </Link>
+        <Link href="/messages" className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white/90 px-4 py-3 text-sm font-medium text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-teal-300 hover:bg-teal-50 hover:shadow-md">
+          <span className="text-lg">&#9993;</span> Send a Message
+        </Link>
+        <Link href="/feedback" className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white/90 px-4 py-3 text-sm font-medium text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-teal-300 hover:bg-teal-50 hover:shadow-md">
+          <span className="text-lg">&#9733;</span> Submit Feedback
+        </Link>
+        <Link href="/activity" className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white/90 px-4 py-3 text-sm font-medium text-slate-700 shadow-sm transition hover:-translate-y-0.5 hover:border-teal-300 hover:bg-teal-50 hover:shadow-md">
+          <span className="text-lg">&#9776;</span> View Activity
+        </Link>
       </section>
 
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">

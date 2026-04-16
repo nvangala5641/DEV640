@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
+import { useLocalStorage } from "../../hooks/localstorage";
 
 type ChatMessage = {
   id: string;
@@ -58,19 +59,9 @@ function currentTimeLabel(): string {
   });
 }
 
-function loadConversations(): Conversation[] {
-  if (typeof window === "undefined") return initialConversations;
-  const stored = localStorage.getItem("conversations");
-  return stored ? JSON.parse(stored) : initialConversations;
-}
-
 export default function MessagesPage() {
-  const [conversations, setConversations] = useState<Conversation[]>(loadConversations);
+  const [conversations, setConversations] = useLocalStorage<Conversation[]>("conversations", initialConversations);
   const [activeId, setActiveId] = useState(initialConversations[0].id);
-
-  useEffect(() => {
-    localStorage.setItem("conversations", JSON.stringify(conversations));
-  }, [conversations]);
   const [draft, setDraft] = useState("");
 
   const activeConversation = useMemo(

@@ -74,11 +74,14 @@ export default function AuthPage() {
   }
 
   function skipOtp() {
-    if (mode === "signup") {
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-      users.push({ email, fullName, password });
-      localStorage.setItem("users", JSON.stringify(users));
+    if (mode !== "signup") {
+      setError("OTP needs to be verified for Login");
+      return;
     }
+
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    users.push({ email, fullName, password });
+    localStorage.setItem("users", JSON.stringify(users));
 
     localStorage.setItem("fullName", fullName);
     document.cookie = "session=true; path=/; max-age=3600";
@@ -180,7 +183,7 @@ export default function AuthPage() {
             />
 
             <button className="rounded-lg bg-gradient-to-r from-indigo-600 to-teal-500 px-4 py-2 text-sm font-medium text-white transition hover:opacity-90">
-              Continue to 2FA (optional)
+              {mode === "signup" ? "Continue to 2FA (optional)" : "Continue to 2FA"}
             </button>
           </form>
         )}
@@ -201,13 +204,15 @@ export default function AuthPage() {
             <button className="rounded-lg bg-teal-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-teal-800">
               Verify and Access App
             </button>
-            <button
-              type="button"
-              onClick={skipOtp}
-              className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
-            >
+            {mode === "signup" && (
+              <button
+                type="button"
+                onClick={skipOtp}
+                className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+              >
               Skip 2FA
             </button>
+          )}
           </form>
         )}
 

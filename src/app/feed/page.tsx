@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
+import { useLocalStorage } from "../../hooks/localstorage";
 
 type Post = {
   id: string;
@@ -35,24 +36,9 @@ function formatDateTime(value: string): string {
   });
 }
 
-function loadPosts(): Post[] {
-  if (typeof window === "undefined") return initialPosts;
-  const stored = localStorage.getItem("posts");
-  return stored ? JSON.parse(stored) : initialPosts;
-}
-
 export default function FeedPage() {
-  const [posts, setPosts] = useState<Post[]>(loadPosts);
-  const [author, setAuthor] = useState("Team Member");
-
-  useEffect(() => {
-    const name = localStorage.getItem("fullName");
-    if (name) setAuthor(name);
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("posts", JSON.stringify(posts));
-  }, [posts]);
+  const [posts, setPosts] = useLocalStorage<Post[]>("posts", initialPosts);
+  const [author, setAuthor] = useLocalStorage<string>("fullName", "Team Member");
   const [draft, setDraft] = useState("");
   const [quoteId, setQuoteId] = useState("");
 

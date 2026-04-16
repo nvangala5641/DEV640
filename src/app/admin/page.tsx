@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { useLocalStorage } from "../../hooks/localstorage";
 
 type Training = {
   id: string;
@@ -55,8 +56,8 @@ function formatDate(value: string): string {
 }
 
 export default function AdminPage() {
-  const [trainings, setTrainings] = useState<Training[]>(initialTrainings);
-  const [topics, setTopics] = useState<Topic[]>(initialTopics);
+  const [trainings, setTrainings] = useLocalStorage<Training[]>("trainings", initialTrainings);
+  const [topics, setTopics] = useLocalStorage<Topic[]>("topics", initialTopics);
 
   const [trainingTitle, setTrainingTitle] = useState("");
   const [trainingOwner, setTrainingOwner] = useState("HR");
